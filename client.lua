@@ -64,26 +64,37 @@ local normal = {
     ["minimap_sea_2_1"] = "minimap_sea_2_1"
 }
 
-RegisterCommand("postal", function()
+function togglePostal()
     if isPostalActive then
         isPostalActive = false
         for k, v in pairs(normal) do
-            RequestStreamedTextureDict(k, false)
-            while not HasStreamedTextureDictLoaded(k) do
-                Wait(1)
+            if not HasStreamedTextureDictLoaded(k) then
+                RequestStreamedTextureDict(k, false)
+                while not HasStreamedTextureDictLoaded(k) do
+                    Wait(1)
+                end
             end
             local postalKey = string.gsub(k, "minimap_", "postal_")
             AddReplaceTexture(postal[postalKey], v, k, v)
+            SetStreamedTextureDictAsNoLongerNeeded(k)
         end
     else
         isPostalActive = true
         for k, v in pairs(postal) do
-            RequestStreamedTextureDict(k, false)
-            while not HasStreamedTextureDictLoaded(k) do
-                Wait(1)
+            if not HasStreamedTextureDictLoaded(k) then
+                RequestStreamedTextureDict(k, false)
+                while not HasStreamedTextureDictLoaded(k) do
+                    Wait(1)
+                end
             end
             local normalKey = string.gsub(k, "postal_", "minimap_")
             AddReplaceTexture(normal[normalKey], v, k, v)
+            SetStreamedTextureDictAsNoLongerNeeded(k)
         end
     end
+end
+exports("togglePostal", togglePostal)
+
+RegisterCommand("postal", function()
+    togglePostal()
 end, false)
