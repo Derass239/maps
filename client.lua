@@ -65,7 +65,6 @@ local normal = {
 }
 
 RegisterCommand("postal", function()
-    print(isPostalActive)
     if isPostalActive then
         isPostalActive = false
         for k, v in pairs(normal) do
